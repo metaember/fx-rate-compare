@@ -13,6 +13,7 @@ A Flask-based dashboard that tracks foreign exchange rates from Visa's public FX
 - 🌐 Clean HTML dashboard at `/` with flag emojis 🇯🇵🇬🇧🇲🇽
 - 📤 `/export/csv` and `/export/json` endpoints
 - 📜 `/log/view` to see all historical data in browser
+- �� **Docker support** with Traefik integration
 
 ---
 
@@ -114,3 +115,11 @@ Attribution appreciated but not required. ✌️
 ## ✨ Credits
 Built by me — inspired by real travel, real markups, and real curiosity.
 Feel free to fork, improve, or open issues!
+
+### Production Notes
+
+- Uses Gunicorn as the production WSGI server
+- Configured with 4 worker processes
+- 120-second timeout for long-running requests
+- Automatic worker process management
+- Production-ready error handling

@@ -17,4 +17,5 @@ COPY visa_fx_backend.py .
 ENV PATH="/venv/bin:$PATH"
 
 EXPOSE 3000
-CMD ["python", "visa_fx_backend.py"]
+# Command to run the application with Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:3000", "--workers", "4", "--timeout", "120", "visa_fx_backend:app"]
