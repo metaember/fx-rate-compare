@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  visa-fx-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: visa-fx-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./fx_log.csv:/app/fx_log.csv
+    restart: unless-stopped
+    environment:
+      - FLASK_APP=visa_fx_backend.py
+      - FLASK_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
