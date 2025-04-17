@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  visa-fx-backend:
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "my_traefik.proxy_network=public"
+      - "traefik.http.routers.visa-fx.rule=Host(`fx.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.visa-fx.tls=true"
+      - "traefik.http.routers.visa-fx.entrypoints=web,websecure"
+      - "traefik.http.routers.visa-fx.tls.certresolver=cloudflare"
+      - "traefik.http.services.visa-fx.loadbalancer.server.port=3000"
+
+networks:
+  traefik-public:
+    external: true

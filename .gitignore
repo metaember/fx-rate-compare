@@ -13,3 +13,4 @@ wheels/
 fx_log.csv
 *.log
 __pycache__/
+.env
