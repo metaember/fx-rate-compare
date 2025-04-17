@@ -54,6 +54,31 @@ docker build -t visa-fx-tracker .
 docker run -d -p 3000:3000 visa-fx-tracker
 ```
 
+Or with docker compose:
+
+```bash
+docker compose up -d
+```
+
+### Docker Deployment
+
+1. Local development (with port mapping):
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
+   ```
+   Access at: http://localhost:3000
+
+2. Production deployment with Traefik:
+   ```bash
+   # Set your domain variables
+   export SUBDOMAIN=visa-fx
+   export DOMAIN_NAME=yourdomain.com
+
+   # Start the application
+   docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+   ```
+   Access at: https://visa-fx.yourdomain.com
+
 ## 🧾 Routes
 
 | Route          | Description                                           |
