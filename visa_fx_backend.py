@@ -6,13 +6,20 @@ from datetime import datetime
 from urllib.parse import quote
 import os
 from collections import defaultdict
+from pathlib import Path
+
+# Fix SSL certificate verification in Docker
+os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
 
 app = Flask(__name__)
 
 cache = {}
 last_fetched = 0
 TTL = 3 * 60 * 60  # 3 hours
-LOG_FILE = 'fx_log.csv'
+LOG_FILE = 'data/fx_log.csv'
+
+if not Path(LOG_FILE).exists():
+    Path(LOG_FILE).touch()
 
 CURRENCIES = ['JPY', 'EUR', 'GBP', 'THB', 'CAD', 'AUD', 'INR', 'MXN', 'CHF', 'CNY', 'SEK', 'NZD']
 FLAG_MAP = {

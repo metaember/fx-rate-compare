@@ -5,13 +5,13 @@ services:
       dockerfile: Dockerfile
     container_name: visa-fx-backend
     volumes:
-      - ./fx_log.csv:/app/fx_log.csv
+      - ./data:/app/data
     restart: unless-stopped
     environment:
       - FLASK_APP=visa_fx_backend.py
       - FLASK_ENV=production
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/" ]
       interval: 30s
       timeout: 10s
       retries: 3
