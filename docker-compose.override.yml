@@ -10,6 +10,11 @@ services:
       - "traefik.http.routers.visa-fx.entrypoints=web,websecure"
       - "traefik.http.routers.visa-fx.tls.certresolver=cloudflare"
       - "traefik.http.services.visa-fx.loadbalancer.server.port=3000"
+      - homepage.group=Apps
+      - homepage.name=Visa FX
+      - homepage.icon=mdi-currency-usd
+      - homepage.href=https://fx.${DOMAIN_NAME}
+      - homepage.description=FX rate comparison
 
 networks:
   traefik-public:

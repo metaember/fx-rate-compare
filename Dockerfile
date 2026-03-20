@@ -20,4 +20,4 @@ ENV PATH="/venv/bin:$PATH"
 
 EXPOSE 3000
 # Command to run the application with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:3000", "--workers", "4", "--timeout", "120", "visa_fx_backend:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:3000", "--workers", "1", "--threads", "4", "--timeout", "120", "visa_fx_backend:app"]
