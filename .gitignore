@@ -10,7 +10,6 @@ wheels/
 .venv
 
 # for this app
-fx_log.csv
+data/
 *.log
-__pycache__/
 .env

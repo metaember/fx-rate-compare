@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}FX Rate Log{% endblock %}
+
+{% block extra_style %}
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.page-header p {
+    margin-top: 0.25rem;
+}
+
+.page-header a {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+td {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 0.75rem;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Rate Log</h1>
+    <p><a href="/">&larr; back</a></p>
+</div>
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Currency</th>
+                <th>Name</th>
+                <th>Visa Rate</th>
+                <th>Benchmark</th>
+                <th>Markup %</th>
+                <th>Revolut Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                {% for cell in row %}<td>{{ cell }}</td>{% endfor %}
+                {% if row|length < 7 %}<td class="na">--</td>{% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

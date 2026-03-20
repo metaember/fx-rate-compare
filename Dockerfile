@@ -15,6 +15,7 @@ RUN uv venv /venv && \
     uv pip install -r pyproject.toml
 
 COPY visa_fx_backend.py .
+COPY templates/ templates/
 
 ENV PATH="/venv/bin:$PATH"
 
