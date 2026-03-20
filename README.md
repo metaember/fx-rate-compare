@@ -1,125 +1,83 @@
-# 💱 Visa FX Rate Tracker
+# FX Rate Comparison
 
-A Flask-based dashboard that tracks foreign exchange rates from Visa's public FX API and compares them against ECB benchmark rates. Great for figuring out **real-world currency markups** when using cards like the Chase Sapphire Reserve abroad.
+A Flask dashboard that compares foreign exchange rates from **Visa** and **Revolut** against ECB benchmark rates. Useful for seeing real-world currency markups when using cards abroad.
 
----
+## Features
 
-## 🌍 Features
+- Live Visa and Revolut FX rates vs ECB mid-market benchmarks
+- Markup % calculation for transparency
+- Sparkline trend charts showing how markups evolve
+- CSV logging for long-term analysis
+- Background rate fetching (once daily) — page loads never hit external APIs
+- Disk-persisted cache survives restarts
+- Docker support with optional Traefik integration
 
-- 📈 **Live Visa FX Rates** vs. **ECB Mid-Market Benchmarks**
-- 📊 **Markup %** calculation for transparency
-- 🔥 **Sparkline trend charts** to show how markups evolve over time
-- 📁 **CSV logging** for long-term analysis
-- 🌐 Clean HTML dashboard at `/` with flag emojis 🇯🇵🇬🇧🇲🇽
-- 📤 `/export/csv` and `/export/json` endpoints
-- 📜 `/log/view` to see all historical data in browser
-- �� **Docker support** with Traefik integration
+## Getting Started
 
----
-
-## 🧪 Example Use Cases
-
-- See if you're getting overcharged on foreign transactions
-- Compare Visa's rate to the true interbank rate
-- Monitor currency trends if you're a frequent traveler
-
----
-
-## 🚀 Getting Started
-
-### ▶️ Run with Python (`uv` or pip)
+### Run locally
 
 ```bash
-# Using uv (fast dependency manager)
 uv venv && source .venv/bin/activate
-uv pip install flask requests
-python visa_fx_backend.py
-```
-Or with pip:
-
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install flask requests
+uv pip install -r pyproject.toml
 python visa_fx_backend.py
 ```
 
-Then visit:
-📍 http://localhost:3000
+Then visit http://localhost:3000
 
-
-## 🐳 Docker Usage
-
-```bash
-docker build -t visa-fx-tracker .
-docker run -d -p 3000:3000 visa-fx-tracker
-```
-
-Or with docker compose:
+### Docker
 
 ```bash
 docker compose up -d
 ```
 
-### Docker Deployment
+For local development with port mapping:
 
-1. Local development (with port mapping):
-   ```bash
-   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
-   ```
-   Access at: http://localhost:3000
-
-2. Production deployment with Traefik:
-   ```bash
-   # Set your domain variables
-   export SUBDOMAIN=visa-fx
-   export DOMAIN_NAME=yourdomain.com
-
-   # Start the application
-   docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
-   ```
-   Access at: https://visa-fx.yourdomain.com
-
-## 🧾 Routes
-
-| Route          | Description                                           |
-|----------------|-------------------------------------------------------|
-| `/`            | Main dashboard (Visa vs. ECB with sparkline trends)   |
-| `/export/json` | Latest FX data in JSON                                |
-| `/export/csv`  | All logged rates as downloadable CSV                  |
-| `/log/view`    | Full log table in browser                             |
-
-## 🔒 Privacy / Safety Notes
-No authentication, credentials, or tokens are used
-
-All headers mimic a standard browser (no API keys)
-
-Logs are local only — no data is sent to third parties
-
-## 📂 Project Structure
-
-```
-visa-fx-tracker/
-├── visa_fx_backend.py     # Main Flask app
-├── requirements.txt       # Pip dependencies
-├── pyproject.toml         # uv-compatible dependencies (optional)
-├── fx_log.csv             # Logged historical rates (auto-generated)
-├── Dockerfile             # Container build
-└── README.md              # You're here!
+```bash
+docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
 ```
 
-## 📖 License
-MIT — use, modify, and share freely.
-Attribution appreciated but not required. ✌️
+For production with Traefik:
 
-## ✨ Credits
-Built by me — inspired by real travel, real markups, and real curiosity.
-Feel free to fork, improve, or open issues!
+```bash
+export DOMAIN_NAME=yourdomain.com
+docker compose up -d
+```
 
-### Production Notes
+## Routes
 
-- Uses Gunicorn as the production WSGI server
-- Configured with 4 worker processes
-- 120-second timeout for long-running requests
-- Automatic worker process management
-- Production-ready error handling
+| Route          | Description                          |
+|----------------|--------------------------------------|
+| `/`            | Main dashboard                       |
+| `/health`      | Health check endpoint                |
+| `/export/json` | Current rates as JSON                |
+| `/export/csv`  | Historical rates as downloadable CSV |
+| `/log/view`    | Full log table in browser            |
+
+## Project Structure
+
+```
+fx-rate-compare/
+├── visa_fx_backend.py          # Flask app + background fetcher
+├── templates/
+│   ├── base.html               # Shared layout and styles
+│   ├── index.html              # Main dashboard
+│   └── log.html                # Log viewer
+├── data/
+│   ├── fx_log.csv              # Historical rates (auto-generated)
+│   └── fx_cache.json           # Persisted rate cache
+├── pyproject.toml              # Dependencies
+├── Dockerfile
+├── docker-compose.yml
+├── docker-compose.override.yml # Traefik labels (production)
+└── docker-compose.local.yml    # Port mapping (development)
+```
+
+## How It Works
+
+A background thread fetches rates from Visa and Revolut APIs once every 24 hours. Results are cached in memory and persisted to `data/fx_cache.json`. All HTTP endpoints serve from cache — no user request ever triggers an external API call.
+
+Visa's API is behind Cloudflare, so requests use `curl_cffi` with browser TLS fingerprint impersonation.
+
+## License
+
+MIT

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block extra_style %}
+header {
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+
+header p {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.mono {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 0.8125rem;
+}
+
+.markup {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+.markup-low { color: var(--green); }
+.markup-mid { color: var(--amber); }
+.markup-high { color: var(--red); }
+
+.currency-cell {
+    font-weight: 500;
+}
+
+.currency-name {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+}
+
+.na {
+    color: var(--text-tertiary);
+}
+
+.provider-divider {
+    border-left: 1px solid var(--border);
+}
+
+.col-group-label {
+    text-align: center !important;
+    color: var(--text-secondary);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding-top: 0.5rem;
+    padding-bottom: 0.25rem;
+}
+
+.sub-header {
+    font-size: 0.625rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.625rem;
+}
+
+.sparkline-cell svg {
+    display: block;
+    opacity: 0.5;
+}
+
+tbody tr:hover .sparkline-cell svg {
+    opacity: 1;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+}
+
+footer a {
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    transition: color 0.15s;
+}
+
+footer a:hover {
+    color: var(--text-secondary);
+}
+{% endblock %}
+
+{% block content %}
+<header>
+    <h1>FX Rates</h1>
+    <p>USD conversion rates &middot; {{ last_updated }}</p>
+</header>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">Currency</th>
+                <th rowspan="2" class="hide-mobile">Name</th>
+                <th colspan="2" class="col-group-label provider-divider">Visa</th>
+                <th colspan="2" class="col-group-label provider-divider">Revolut</th>
+                <th rowspan="2" class="hide-mobile" style="width:90px"></th>
+            </tr>
+            <tr>
+                <th class="sub-header provider-divider">Rate</th>
+                <th class="sub-header">Markup</th>
+                <th class="sub-header provider-divider">Rate</th>
+                <th class="sub-header">Markup</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td class="currency-cell">{{ row.currency }}</td>
+                <td class="currency-name hide-mobile">{{ row.name }}</td>
+                <td class="mono provider-divider">{{ row.visa_rate }}</td>
+                {% if row.visa_markup_val is not none %}
+                <td class="markup {% if row.visa_markup_val < 0.3 %}markup-low{% elif row.visa_markup_val < 0.6 %}markup-mid{% else %}markup-high{% endif %}">{{ row.visa_markup }}</td>
+                {% else %}
+                <td class="na">--</td>
+                {% endif %}
+                <td class="mono provider-divider{% if row.revolut_rate == 'N/A' %} na{% endif %}">{{ row.revolut_rate }}</td>
+                {% if row.revolut_markup_val is not none %}
+                <td class="markup {% if row.revolut_markup_val < 0.3 %}markup-low{% elif row.revolut_markup_val < 0.6 %}markup-mid{% else %}markup-high{% endif %}">{{ row.revolut_markup }}</td>
+                {% else %}
+                <td class="na">--</td>
+                {% endif %}
+                <td class="sparkline-cell hide-mobile">
+                    {% if row.sparkline %}
+                    <svg width="80" height="20" viewBox="0 0 80 20">
+                        <polyline points="{{ row.sparkline }}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<footer>
+    <a href="/export/csv">csv</a>
+    <a href="/export/json">json</a>
+    <a href="/log/view">log</a>
+</footer>
+{% endblock %}
